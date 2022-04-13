@@ -397,8 +397,8 @@ mprotect(void *addr, int len)
 {
   pde_t *pgdir = myproc()->pgdir;
   pte_t *pte;
-  uint ulimit = uaddr + len;
   uint uaddr = (uint)addr;
+  uint ulimit = uaddr + len;
   uint flags;
   uint x = uaddr;
   while(x<ulimit){
