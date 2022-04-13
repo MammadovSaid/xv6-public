@@ -98,7 +98,7 @@ sys_mprotect(void)
   if(argint(0, &addr)<0){
     return -1;
   }
-  if(argint(1, &addr)<0){
+  if(argint(1, &size)<0){
     return -1;
   }
   return mprotect((void*) addr, size);
@@ -112,7 +112,7 @@ sys_munprotect(void)
   if(argint(0, &addr)<0){
     return -1;
   }
-  if(argint(1, &addr)<0){
+  if(argint(1, &size)<0){
     return -1;
   }
   return munprotect((void*) addr, size);
