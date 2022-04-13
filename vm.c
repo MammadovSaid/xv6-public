@@ -392,6 +392,55 @@ copyout(pde_t *pgdir, uint va, void *p, uint len)
   return 0;
 }
 
+int 
+mprotect(void *addr, int len)
+{
+  pde_t *pgdir = myproc()->pgdir;
+  pte_t *pte;
+  uint ulimit = uaddr + len;
+  uint uaddr = (uint)addr;
+  uint flags;
+  uint x = uaddr;
+  while(x<ulimit){
+    pte = walkpgdir(pgdir, (char*)x, 0);
+    if(pte==0){
+      return -1;
+    }
+    flags = *pte & PTE_FLAGS(*pte);
+    if(flags & PTE_U){
+      flags &= ~PTE_U;
+      flags |= PTE_W;
+      *pte = PTE_ADDR(*pte) | flags;
+    }
+    x+=PGSIZE;
+  }
+  return 0;
+}
+
+int 
+munprotect(void *addr, int len)
+{
+  pde_t *pgdir = myproc()->pgdir;
+  pte_t *pte;
+  uint uaddr = (uint)addr;
+  uint ulimit = uaddr + len;
+  uint flags;
+  uint x = uaddr;
+  while(x<ulimit){
+    pte = walkpgdir(pgdir, (char*)x, 0);
+    if(pte==0){
+      return -1;
+    }
+    flags = *pte & PTE_FLAGS(*pte);
+    if(flags & PTE_U){
+      flags &= ~PTE_U;
+      *pte = PTE_ADDR(*pte) | flags;
+    }
+    x+=PGSIZE;
+  }
+  return 0;
+}
+
 //PAGEBREAK!
 // Blank page.
 //PAGEBREAK!
